@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Course {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  modules     CourseModule[]
+}
+
+model Module {
+  id          Int            @id @default(autoincrement())
+  title       String
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  courses     CourseModule[]
+}
+
+model CourseModule {
+  courseId    Int
+  moduleId    Int
+
+  course      Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  module      Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, moduleId])
+  @@index([moduleId])
+}
